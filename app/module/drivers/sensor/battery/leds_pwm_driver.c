@@ -11,10 +11,13 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/led.h>
 #include <zmk/leds_pwm_driver.h>
+#include <zephyr/drivers/gpio.h>
 
 //LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #define LED_PWM_NODE_ID	 DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
+
+static struct gpio_dt_spec leds_pwron = GPIO_DT_SPEC_GET(DT_NODELABEL(gpio_leds), pwr_gpios);
 
 const char *led_label[] = {
 	DT_FOREACH_CHILD_SEP_VARGS(LED_PWM_NODE_ID, DT_PROP_OR, (,), label, NULL)
@@ -77,5 +80,6 @@ void led_event_handler(uint8_t percent)
 	{
 		led_on(led_pwm,2);
 	}
+    gpio_pin_configure_dt(&leds_pwron, GPIO_OUTPUT_HIGH);
 
 }
